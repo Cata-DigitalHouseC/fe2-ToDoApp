@@ -1,4 +1,4 @@
-window.addEventListener('load', function () {
+window.addEventListener('load', function () { //adentro son variables locales, no las veo en el browser, 
     /* ---------------------- obtenemos variables globales ---------------------- */
     const inputNombre = document.querySelector('#inputNombre');
     const inputApellido = document.querySelector('#inputApellido');
@@ -27,6 +27,8 @@ window.addEventListener('load', function () {
         console.log(datosUsuario);
         realizarRegister(datosUsuario);
 
+        form.reset(); //limpiar formulario
+
 
 
     });
@@ -48,12 +50,10 @@ window.addEventListener('load', function () {
         fetch(url, config).then((response) => response.json())
             .then((data) => {
                 console.log(data);
-
                 if (data.jwt) {
                     localStorage.setItem('jwt', data.jwt);
                     location.replace('mis-tareas.html');
                 }
-
             }).catch((response) => {
                 console.error(response);
             })
