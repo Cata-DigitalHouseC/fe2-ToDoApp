@@ -13,6 +13,9 @@ window.addEventListener('load', function () {
   const formCrearTarea = document.querySelector('form.nueva-tarea');
   const nombreUsuario = document.querySelector('.user-info p');
   const contenedorTareas = document.querySelector('.tareas-pendientes');
+  const contenedorTareasPendientes = document.querySelector('.tareas-pendientes');
+  const contenedorTareasTerminadas = document.querySelector('.tareas-terminadas');
+  const cantidadFinalizadas = document.querySelector('#cantidad-finalizadas');
   const inputTarea = document.querySelector('#nuevaTarea');
 
 
@@ -120,18 +123,16 @@ window.addEventListener('load', function () {
       body: JSON.stringify(nueva)
     }
 
+    //enviamos la carta al servidor
+    fetch('https://ctd-todo-api.herokuapp.com/v1/tasks', conf).then(response => response.json())
+      .then(data => {
+        console.log(data);
+        inputTarea.value='';
+        consultarTareas();
+      }).catch(response => {
+        console.error(response);
+      })});
 
-
-
-
-
-
- 
-
-
-
-
-  });
 
 
   /* -------------------------------------------------------------------------- */
@@ -139,8 +140,16 @@ window.addEventListener('load', function () {
   /* -------------------------------------------------------------------------- */
   function renderizarTareas(listado) {
     contenedorTareas.innerHTML = '';
-      listado.forEach(tarea => {
-        contenedorTareas.innerHTML += `
+    contenedorTareasPendientes.innerHTML='';
+    contenedorTareasTerminadas.innerHTML='';
+    cantidadFinalizadas.textContent = '0';
+
+    let contador = 0; 
+    listado.forEach(tarea => {
+
+      if (tarea.completed) {
+        contador++;
+        contenedorTareasTerminadas.innerHTML += `
         <li class="tarea” data-aos="fade-up">
           <div class="hecha">
           <i class="fa-regular fa-circle-check"></i>
@@ -154,7 +163,21 @@ window.addEventListener('load', function () {
         </div>
       </li>
       `;
-      });
+      } else {
+        contenedorTareasPendientes.innerHTML += `
+      <li class="tarea" data-aos="flip-up">
+        <button class="change” id="${
+          tarea.id
+          }"><i class="fa-regular fa-circle"></i></button>
+          <div class="descripcion">
+            <p class="nombre">${ tarea.description }</p>
+            <p class="timestamp">${ tarea.createdAt }</p>
+          </div>
+          <li>
+          `;
+      }
+    });
+      cantidadFinalizadas.textContent = contador;
   };
 
   /* -------------------------------------------------------------------------- */
