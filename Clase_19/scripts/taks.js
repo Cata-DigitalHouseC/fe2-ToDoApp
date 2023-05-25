@@ -73,7 +73,21 @@ window.addEventListener('load', function () {
     fetch(url, config).then(response => response.json())
       .then(data => {
         console.log(data);
-        renderizarTareas(data);
+
+        //clasificar las tareas
+        let completas = [];
+        let pendientes =[];
+
+        data.forEach(tarea => {
+          if (tarea.completed) {
+            completas.push(tarea);
+          } else {
+            pendientes.push(tarea);
+          }
+        });
+        //Renderizar tareas
+        renderizarTareas(completas);
+        renderizarTareas(pendientes);
         //botonesCambioEstado();
         //botonBorrarTarea();
       }).catch(response => {
@@ -89,6 +103,29 @@ window.addEventListener('load', function () {
     console.log('Preparando tarea', inputTarea.value);
 
     //Solicitud de la Api con el metodo Post
+
+    //preparamos el obj a enviar al servidor
+    const nueva = {
+      description: inputTarea.value,
+      completed:false
+    }
+
+    //armamos la carta (peticion) como la pide el servidor (ver documentacion)
+    const conf = {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        authorization: jwt
+    },
+      body: JSON.stringify(nueva)
+    }
+
+
+
+
+
+
+
  
 
 
@@ -101,6 +138,7 @@ window.addEventListener('load', function () {
   /*                  FUNCIÓN 5 - Renderizar tareas en pantalla                 */
   /* -------------------------------------------------------------------------- */
   function renderizarTareas(listado) {
+    contenedorTareas.innerHTML = '';
       listado.forEach(tarea => {
         contenedorTareas.innerHTML += `
         <li class="tarea” data-aos="fade-up">
